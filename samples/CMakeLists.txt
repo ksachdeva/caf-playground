@@ -19,6 +19,7 @@ macro(add_sample app_name app_path main_file)
     add_executable(${app_name} ${app_path}/${main_file}.cc)
     target_link_libraries(
         ${app_name}
+        caf::caf
         ${LINK_OPTIONS}
     )
 endmacro()

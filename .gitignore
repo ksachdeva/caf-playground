@@ -34,3 +34,5 @@
 _release
 _debug
 _debug_xcode
+build
+*.log
