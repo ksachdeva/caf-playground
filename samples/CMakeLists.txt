@@ -26,4 +26,5 @@ endmacro()
 
 add_sample(hello-caf ${SAMPLES_SRC_PATH} hello-caf)
 add_sample(polymorphic-actors ${SAMPLES_SRC_PATH} polymorphic-actors)
+add_sample(self-quiting-actor ${SAMPLES_SRC_PATH} self-quiting-actor)
 
