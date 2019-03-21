@@ -26,6 +26,42 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
+        },
+        {
+            "name": "ref-of-cls-actors",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/_debug/bin/ref-of-cls-actors",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "monitoring-actors",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/_debug/bin/monitoring-actors",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "quit-from-separate-thread",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/_debug/bin/quit-from-separate-thread",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
         }
     ]
 }
