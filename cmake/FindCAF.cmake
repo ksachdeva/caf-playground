@@ -114,10 +114,5 @@ find_package_handle_standard_args(CAF
 # final step to tell CMake we're done
 mark_as_advanced(CAF_ROOT_DIR
                  CAF_LIBRARIES
-                 CAF_INCLUDE_DIRS)
+                 CAF_INCLUDE_DIRS)    
 
-if(CAF_core_FOUND AND NOT TARGET caf::caf)
-    add_library(caf::caf INTERFACE IMPORTED)
-    set_property(TARGET caf::caf PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CAF_INCLUDE_DIRS})
-    set_property(TARGET caf::caf PROPERTY INTERFACE_LINK_LIBRARIES ${CAF_LIBRARIES})    
-endif()

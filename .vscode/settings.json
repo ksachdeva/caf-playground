@@ -75,5 +75,8 @@
         "vector": "cpp",
         "hashtable": "cpp"
     },
-    "cmake.buildDirectory": "${workspaceRoot}/_debug"
+    "cmake.buildDirectory": "${workspaceRoot}/_debug",
+    "cmake.configureEnvironment": {
+        "CAF_LOCAL_COMPILE_ROOT": "/Users/ksachdeva/Desktop/Dev/3rdparty-compiled/actor-framework-0.16.3"
+    }
 }
