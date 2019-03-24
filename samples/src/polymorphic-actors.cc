@@ -1,3 +1,6 @@
+// This example shows how one could have different implementation
+// of a trait and therefore achieve the polymorphism.
+
 #include <iostream>
 #include <string>
 

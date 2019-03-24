@@ -36,3 +36,4 @@ _debug
 _debug_xcode
 build
 *.log
+ipch
