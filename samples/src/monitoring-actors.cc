@@ -1,9 +1,25 @@
+// This example demonstrates how a class based actor
+// can monitor other actor(s)
+//
+//
+// An actor can get killed and/or declares itself dead. There are use cases
+// where other actors may be interested in knowing about such events.
+//
+// Here we will build an actor that adds to its state what is supplied in its
+// message until it reaches 3. If the new state is equal to more than 3 then
+// it would quit (i.e. terminate itself)
+//
+// Please note that quit() means that it sort of logically unregisters itself
+// from acto system however the object still remains until all the references
+// to it go away whether explicity or implicitly.
+
 #include <iostream>
 #include <string>
 
-#include "caf/all.hpp"
+#include <caf/all.hpp>
 
 using add_atom = caf::atom_constant<caf::atom("add")>;
+
 // this is a trait for actors that will add until
 // they reach 3 and then they should terminate themselves
 using uptill_3_adder = caf::typed_actor<caf::reacts_to<add_atom, int>>;
@@ -50,8 +66,10 @@ public:
 
     set_down_handler([=](caf::down_msg &msg) {
       std::cout << "Received a down message" << std::endl;
+
+      // this is one way to know which actor was terminated
       if (msg.source == _adder.address()) {
-        std::cout << "We received down for adder " << std::endl;
+        std::cout << "We received down message for adder actor " << std::endl;
       }
     });
   }
@@ -61,6 +79,8 @@ public:
   }
 
   void on_exit() override {
+    // This is a special method and gives you an opportunity to
+    // destroy (clean up) any references (especially that of other actors)
     std::cout << "in on_exit of ASpawnerActor " << std::endl;
     destroy(_adder);
   }
