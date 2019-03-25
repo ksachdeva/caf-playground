@@ -9,10 +9,10 @@ caf::behavior takes_long_time_respond(caf::event_based_actor *self) {
 
       // behaviors of our actor
 
-      // only behavior this implement is a function
-      // that takes nothing but returns a value
-      // however, it does computation heavy stuff before returning its
-      // result
+      // only behavior its implements is a function
+      // that takes nothing but returns a value.
+      // However, it does computation heavy stuff (simulated by sleeping) before
+      // returning its result.
       [=](int x) -> int {
         std::this_thread::sleep_for(std::chrono::seconds(5));
         return 5 * x;
@@ -25,7 +25,7 @@ caf::behavior takes_long_time_respond(caf::event_based_actor *self) {
 // Also this actor implements more than 1 behavior.
 //
 // What we are trying to learn/demonstrate here is that while SomeOther actor
-// is waiting for a response from buddy can we invoke some other behavior
+// is waiting for a response from buddy can we invoke other behaviors ?
 caf::behavior some_other_actor(caf::event_based_actor *self,
                                const caf::actor &buddy) {
 
@@ -71,7 +71,7 @@ void caf_main(caf::actor_system &system) {
   // Again what we intend to learn here is that we would issue
   // message to behavior 3 of some_one and we know that it would long
   // time. In the mean time we would send message to its other behaviors
-  // and see if they respond back before we get result from it or not
+  // and see if they respond back before we get result from behavior 3.
 
   self->send(some_one, caf::get_atom::value);
 

@@ -72,12 +72,12 @@ thereby achiving polymorphism.
 
 * [**request-then**](samples/src/request-then.cc)
 
-This example demonstrates the usage of 'then' when you use request. Usage of 'then' keeps the mailbox
+This example demonstrates the usage of `then` when you use `request`. Usage of `then` keeps the mailbox
 of an actor active i.e. messages to its other behaviors can still be sent.
 
 * [**request-await**](samples/src/request-await.cc)
 
-This example demonstrates the usage of 'await' when you use request. Usage of 'await' informs the framework (CAF)
+This example demonstrates the usage of `await` when you use `request`. Usage of `await` informs the framework (CAF)
 that it should not send messages to its other behaviors while it waiting for the request to finish.
 
 * [**monitoring-actors**](samples/src/monitoring-actors.cc)
@@ -88,6 +88,6 @@ system and other actor that can monitor such events.
 * [**ref-of-cls-actors**](samples/src/ref-of-cls-actors.cc)
 
 This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
-at its construction) to another actor. The other actor would then use the supplied reference to send messages. 
+at its construction) to another actor. The other actor would then use the supplied reference to send messages.
 
 [This example is not working yet !]

@@ -100,7 +100,7 @@ public:
           // [Note - this is all for demonstration by creating weird
           // scenarios]
 
-          // send reference to itself (using 'this')
+          // sends reference to itself (using 'this')
           // to add actor who (we know) is storing the reference in
           // its private variable.
           //
@@ -110,7 +110,7 @@ public:
           // How to clean up this cross reference will be shown later or in
           // other example
 
-          // since it the call for registration will be asynchronous
+          // since the call for registration will be asynchronous
           // we would construct a promise
           auto rp = this->make_response_promise<int>();
 
@@ -156,10 +156,9 @@ void caf_main(caf::actor_system &system) {
             // Note we have a nested callback (pyramid of hell here)
             //
             // It is not a good idea to write code like this but for
-            // demonstration purposes using a simple setup this is done this way
-            // for now.
+            // demonstration purposes it is done this way for now.
 
-            // let's invoke add here and see if it really adds or use sub
+            // let's invoke add here and see if it really adds or uses sub
             // (whose reference it has now)
 
             self->request(add_actor_ref, std::chrono::seconds(10),
