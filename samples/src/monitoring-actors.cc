@@ -6,12 +6,12 @@
 // where other actors may be interested in knowing about such events.
 //
 // Here we will build an actor that adds to its state what is supplied in its
-// message until it reaches 3. If the new state is equal to more than 3 then
+// message until it reaches 3. If the new state >= 3 then
 // it would quit (i.e. terminate itself)
 //
 // Please note that quit() means that it sort of logically unregisters itself
-// from acto system however the object still remains until all the references
-// to it go away whether explicity or implicitly.
+// from the actor system however the object still remains alive until all the
+// references to it go away (explicity or implicitly).
 
 #include <iostream>
 #include <string>
@@ -48,6 +48,9 @@ public:
             caf::aout(this)
                 << "[CLS] Actor reached its purpose so it will terminate "
                 << std::endl;
+
+            // You can invoke quit with out any error code
+            // as well
             this->quit(caf::exit_reason::user_shutdown);
           }
         }};
@@ -64,6 +67,15 @@ public:
       : caf::event_based_actor(cfg),
         _adder(std::move(this->spawn<AddUntilReach3, caf::monitored>())) {
 
+    // Pay attention to how it was specified that this actor (i.e.
+    // ASpawnerActor) would like to monitor AddUntilReach3
+    //
+    // Note that this is not the only way to specify the intention to
+    // monitor. You could simply do this->monitor(other_actor) as well
+    // where other_actor the reference/handle of the actor to monitor
+
+    // Another important piece of code is how you would specify
+    // the lambda that would get invoked on quit events
     set_down_handler([=](caf::down_msg &msg) {
       std::cout << "Received a down message" << std::endl;
 

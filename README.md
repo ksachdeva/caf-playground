@@ -48,5 +48,10 @@ simplest possible use case.
 
 * **polymorphic-actors**
 
-The example demonstrates how you can have different implementations of the same trait and 
+This example demonstrates how you can have different implementations of the same trait and 
 thereby achiving polymorphism.
+
+* **monitoring-actors**
+
+This examples show how one actor can terminate (logical unregistration) itself from the actor
+system and other actor that can monitor such events.
