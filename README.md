@@ -4,6 +4,8 @@
 This repository contain some examples that try to emulate real world
 use cases while still trying to remain simple.
 
+The examples are heavy commented so you can follow along the code.
+
 ## Install
 
 There are two ways to compile the examples. 
@@ -57,39 +59,33 @@ The order of examples is *kind* of important (but not mandaotry to follow) if yo
 
 Here is suggested order to try
 
-* **hello-caf**
+* [**hello-caf**](samples/src/hello-caf.cc)
 
 The customary hello world but with a little twist. Demonstrates how to construct function and
 class based actors. The purpose of this example is for you to get started very quickly with the
 simplest possible use case.
 
-* **polymorphic-actors**
+* [**polymorphic-actors**](samples/src/polymorphic-actors.cc)
 
 This example demonstrates how you can have different implementations of the same trait and 
 thereby achiving polymorphism.
 
-* **receive-then**
-
-This example demonstrates the usage of 'then' block that allows you to process message in an actor
-while still have the message loop active i.e. in case your message handler takes long time, you
-other behaviors are allowed to receive the messages.
-
-* **request-then**
+* [**request-then**](samples/src/request-then.cc)
 
 This example demonstrates the usage of 'then' when you use request. Usage of 'then' keeps the mailbox
 of an actor active i.e. messages to its other behaviors can still be sent.
 
-* **request-await**
+* [**request-await**](samples/src/request-await.cc)
 
 This example demonstrates the usage of 'await' when you use request. Usage of 'await' informs the framework (CAF)
 that it should not send messages to its other behaviors while it waiting for the request to finish.
 
-* **monitoring-actors**
+* [**monitoring-actors**](samples/src/monitoring-actors.cc)
 
 This example shows how one actor can terminate (logical unregistration) itself from the actor
 system and other actor that can monitor such events.
 
-* **ref-of-cls-actors**
+* [**ref-of-cls-actors**](samples/src/ref-of-cls-actors.cc)
 
 This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
 at its construction) to another actor. The other actor would then use the supplied reference to send messages. 
