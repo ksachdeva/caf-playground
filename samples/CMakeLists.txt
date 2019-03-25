@@ -26,5 +26,7 @@ endmacro()
 
 add_sample(hello-caf ${SAMPLES_SRC_PATH} hello-caf)
 add_sample(polymorphic-actors ${SAMPLES_SRC_PATH} polymorphic-actors)
+add_sample(request-then ${SAMPLES_SRC_PATH} request-then)
+add_sample(request-await ${SAMPLES_SRC_PATH} request-await)
 add_sample(ref-of-cls-actors ${SAMPLES_SRC_PATH} ref-of-cls-actors)
 add_sample(monitoring-actors ${SAMPLES_SRC_PATH} monitoring-actors)
