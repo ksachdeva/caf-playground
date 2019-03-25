@@ -2,71 +2,72 @@
 // demonstrate how to get the actor handle from with in
 // the actor object
 
-// we will again use two actors
+// We will use two actors here to demonstrate the concept
 //
-// One of them would have a trait that would receive the reference to the actor
-// i.e. the reference would not be passed at the creation time
+// One of them would have a method that would receive the reference to the other
+// actor and would store it as a reference in the field of the class
 
 #include <iostream>
 #include <string>
 
-#include "caf/all.hpp"
+#include <caf/all.hpp>
 
 using add_atom = caf::atom_constant<caf::atom("add")>;
 using sub_atom = caf::atom_constant<caf::atom("sub")>;
-
 using reg_atom = caf::atom_constant<caf::atom("reg")>;
 
-using sub_actor =
-    caf::typed_actor<caf::replies_to<sub_atom, int, int>::with<int>>;
+using sub_actor = caf::typed_actor<
+
+    caf::replies_to<sub_atom, int, int>::with<int>
+
+    >;
 
 using add_actor = caf::typed_actor<
 
     caf::replies_to<add_atom, int, int>::with<int>,
 
-    // here we define a trait that would accept the handle
+    // here we define a trait that would accept the reference/handle
     // of sub_actor as a parameter
     caf::reacts_to<reg_atom, sub_actor>
 
     >;
 
-// A class based add_actor
-class ActorThatCanAdd : public add_actor::base {
+class ActorThatCheatsWhenAdding : public add_actor::base {
 public:
-  ActorThatCanAdd(caf::actor_config &cfg) : add_actor::base(cfg) {}
-  ~ActorThatCanAdd() {
-    std::cout << "ActorThatCanAdd Destructor called" << std::endl;
+  ActorThatCheatsWhenAdding(caf::actor_config &cfg) : add_actor::base(cfg) {}
+  ~ActorThatCheatsWhenAdding() {
+    std::cout << "ActorThatCheatsWhenAdding Destructor called" << std::endl;
   }
 
 public:
-  ActorThatCanAdd::behavior_type make_behavior() {
-    return {// the behaviors for this actor
-            [=](add_atom, int x, int y) {
-              // TODO:
-              // How to make sure that sub_actor_ref is valid ?
+  ActorThatCheatsWhenAdding::behavior_type make_behavior() {
+    return {
 
-              std::cout << "We come here in add_atom " << std::endl;
+        // implementation of behaviors
 
-              auto rp = this->make_response_promise<int>();
+        // behavior responsible for adding the provided inputs
+        [=](add_atom, int x, int y) {
+          auto rp = this->make_response_promise<int>();
 
-              // we are going to cheat now by doing sub instead of add
-              this->request(this->_sub_actor_ref, caf::infinite,
-                            sub_atom::value, x, y)
-                  .await([=](int result) mutable {
-                    caf::aout(this) << "Acutal result [thanks to sub actor] "
-                                    << result << std::endl;
+          // we are going to cheat now by doing sub instead of add
+          this->request(this->_sub_actor_ref, caf::infinite, sub_atom::value, x,
+                        y)
+              .await([=](int result) mutable {
+                caf::aout(this) << "Acutal result [thanks to sub actor] "
+                                << result << std::endl;
 
-                    // time to deliver on our promise
-                    rp.deliver(result);
-                  });
+                // time to deliver on our promise
+                rp.deliver(result);
+              });
 
-              return rp;
-            },
+          return rp;
+        },
 
-            [=](reg_atom, sub_actor &sub_actor_ref) {
-              caf::aout(this) << "We did registered the ref" << std::endl;
-              this->_sub_actor_ref = caf::actor_cast<sub_actor>(sub_actor_ref);
-            }
+        // behavior responsible for registering the provided reference
+        [=](reg_atom, sub_actor &sub_actor_ref) {
+          caf::aout(this) << "We did registered the ref" << std::endl;
+          this->_sub_actor_ref = sub_actor_ref;
+        }
 
     };
   }
@@ -87,28 +88,43 @@ public:
 
 public:
   ActorThanCanSub::behavior_type make_behavior() {
-    return {// the behaviors for this actor
-            [=](sub_atom, int x, int y) {
-              // This one is a bit strange actor,
-              // instead of doing its job of simply subtraction
-              // it registers itself with add actor as well
-              // [Note - this is all for demonstration by creating weird
-              // scenarios]
+    return {
 
-              // send reference to yourself (using 'this')
-              // to add actor who (we know) is storing the reference in
-              // its private variable.
-              //
-              // Beacause of this now there is a cyclic reference that has been
-              // created and your program will not terminate any more cleanly
+        // implementation of its behavior
 
-              auto rp = this->make_response_promise<int>();
-              this->request(this->_add_actor, caf::infinite, reg_atom::value,
-                            this)
-                  .await([=]() mutable { rp.deliver(x - y); });
+        // implementation of subtraction behavior
+        [=](sub_atom, int x, int y) {
+          // This one is a bit strange actor,
+          // instead of doing its job of simply subtraction
+          // it registers itself with add actor
+          // [Note - this is all for demonstration by creating weird
+          // scenarios]
 
-              return rp;
-            }};
+          // send reference to itself (using 'this')
+          // to add actor who (we know) is storing the reference in
+          // its private variable.
+          //
+          // Beacause of this now there is a cyclic reference that has been
+          // created and your program will not terminate any more cleanly
+          //
+          // How to clean up this cross reference will be shown later or in
+          // other example
+
+          // since it the call for registration will be asynchronous
+          // we would construct a promise
+          auto rp = this->make_response_promise<int>();
+
+          this->request(this->_add_actor, caf::infinite, reg_atom::value, this)
+              .await([=]() mutable {
+                // reaching here means that reference to sub_actor was
+                // successfully provided to the add actor
+
+                // deliver the actual subtraction result
+                rp.deliver(x - y);
+              });
+
+          return rp;
+        }};
   }
 
 private:
@@ -119,17 +135,29 @@ void caf_main(caf::actor_system &system) {
   caf::scoped_actor self{system};
 
   // we create an actor that can add
-  auto add_actor_ref = self->spawn<ActorThatCanAdd>();
+  auto add_actor_ref = self->spawn<ActorThatCheatsWhenAdding>();
 
-  // we create an actor that can do sub but also wants to do add sometimes
-  // and hence it requires a reference to add actor
+  // we create an actor that can do sub
+  // and will want to register itself with add actor at some point
+  // in future so we provide it the reference to our add actor
   auto sub_actor_ref = self->spawn<ActorThanCanSub>(add_actor_ref);
 
   self->request(sub_actor_ref, std::chrono::seconds(10), sub_atom::value, 4, 1)
       .receive(
+
+          // we attach handlers (lambda) to receive the result/promise from
+          // our message sent to sub_actor and we wait for 10 seconds to let
+          // it do its business
+
           [&](int result) {
             caf::aout(self)
                 << "Main after sub received " << result << std::endl;
+
+            // Note we have a nested callback (pyramid of hell here)
+            //
+            // It is not a good idea to write code like this but for
+            // demonstration purposes using a simple setup this is done this way
+            // for now.
 
             // let's invoke add here and see if it really adds or use sub
             // (whose reference it has now)
@@ -137,15 +165,29 @@ void caf_main(caf::actor_system &system) {
             self->request(add_actor_ref, std::chrono::seconds(10),
                           add_atom::value, 7, 2)
                 .receive(
+
+                    // we attach handlers (lambda) to receive the result/promise
+                    // from our message sent to add_actor and we wait for 10
+                    // seconds to let it do its business.
+                    //
+                    // If it can not do its buisness with in 10 seconds then the
+                    // error handler will be invoked
+
                     [&](int resultx) {
                       caf::aout(self) << "Main after adding received "
                                       << resultx << std::endl;
                     },
+
+                    // This is the error handler for the second (nested) receive
+                    // in this pyramid of callback hell
                     [&](const caf::error &err) {
                       caf::aout(self)
                           << " [nested adding] errored " << err << std::endl;
                     });
           },
+
+          // This is the error handler for the first receive in this pyramid of
+          // callback hell
           [&](const caf::error &err) {
             caf::aout(self) << "remote errored " << err << std::endl;
           });

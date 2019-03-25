@@ -53,5 +53,13 @@ thereby achiving polymorphism.
 
 * **monitoring-actors**
 
-This examples show how one actor can terminate (logical unregistration) itself from the actor
+This example shows how one actor can terminate (logical unregistration) itself from the actor
 system and other actor that can monitor such events.
+
+* **ref-of-cls-actors**
+
+This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
+at its construction) to another actor. The other actor would then use the supplied reference to send messages. 
+
+[This example is not working yet !]
+
