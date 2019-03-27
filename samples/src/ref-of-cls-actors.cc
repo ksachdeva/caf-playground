@@ -4,8 +4,9 @@
 
 // We will use two actors here to demonstrate the concept
 //
-// One of them would have a method that would receive the reference to the other
-// actor and would store it as a reference in the field of the class
+// One of them (SubActor) would have a method that would receive the reference
+// to the other actor (AddActor) at the construction time and would store it as
+// a reference in the field of the class.
 
 #include <iostream>
 #include <string>
@@ -18,6 +19,11 @@ using reg_atom = caf::atom_constant<caf::atom("reg")>;
 
 using sub_actor = caf::typed_actor<
 
+    // this message will indicate to sub_actor
+    // that it should register itself with AddActor
+    // caf::replies_to<reg_atom>::with<bool>,
+
+    // this message performs simple subtraction
     caf::replies_to<sub_atom, int, int>::with<int>
 
     >;
@@ -40,6 +46,8 @@ public:
   }
 
 public:
+  const char *name() const { return "ActorThatCheatsWhenAdding"; }
+
   ActorThatCheatsWhenAdding::behavior_type make_behavior() {
     return {
 
@@ -81,12 +89,15 @@ private:
 class ActorThanCanSub : public sub_actor::base {
 public:
   ActorThanCanSub(caf::actor_config &cfg, add_actor &add_actor_ref)
-      : sub_actor::base(cfg), _add_actor(add_actor_ref) {}
+      : sub_actor::base(cfg), _add_actor(add_actor_ref),
+        _have_registered_itself_with_adder(false) {}
   ~ActorThanCanSub() {
     std::cout << "ActorThanCanSub Destructor called" << std::endl;
   }
 
 public:
+  const char *name() const { return "ActorThanCanSub"; }
+
   ActorThanCanSub::behavior_type make_behavior() {
     return {
 
@@ -100,35 +111,46 @@ public:
           // [Note - this is all for demonstration by creating weird
           // scenarios]
 
-          // sends reference to itself (using 'this')
-          // to add actor who (we know) is storing the reference in
-          // its private variable.
+          if (!_have_registered_itself_with_adder) {
+
+            // sends reference to itself (using 'this')
+            // to add actor who (we know) is storing the reference in
+            // its private variable.
+            //
+            // Beacause of this now there is a cyclic reference that has been
+            // created and your program will not terminate any more cleanly
+            //
+            // How to clean up this cross reference will be shown later or in
+            // other example
+
+            // since the call for registration will be asynchronous
+            // we would construct a promise
+            auto rp = this->make_response_promise<int>();
+
+            this->request(this->_add_actor, caf::infinite, reg_atom::value,
+                          this)
+                .await([=]() mutable {
+                  // reaching here means that reference to sub_actor was
+                  // successfully provided to the add actor
+                  this->_have_registered_itself_with_adder = true;
+
+                  // deliver the actual subtraction result
+                  rp.deliver(x - y);
+                });
+
+            return rp;
+          }
+          // perform its task of doing plain old subtraction
           //
-          // Beacause of this now there is a cyclic reference that has been
-          // created and your program will not terminate any more cleanly
-          //
-          // How to clean up this cross reference will be shown later or in
-          // other example
-
-          // since the call for registration will be asynchronous
-          // we would construct a promise
-          auto rp = this->make_response_promise<int>();
-
-          this->request(this->_add_actor, caf::infinite, reg_atom::value, this)
-              .await([=]() mutable {
-                // reaching here means that reference to sub_actor was
-                // successfully provided to the add actor
-
-                // deliver the actual subtraction result
-                rp.deliver(x - y);
-              });
-
-          return rp;
+          // Now since we return a promise this time around we need to use
+          // a helper to make a full filled promise
+          return this->response(x - y);
         }};
   }
 
 private:
   add_actor _add_actor;
+  bool _have_registered_itself_with_adder;
 };
 
 void caf_main(caf::actor_system &system) {
