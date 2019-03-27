@@ -19,10 +19,6 @@ using reg_atom = caf::atom_constant<caf::atom("reg")>;
 
 using sub_actor = caf::typed_actor<
 
-    // this message will indicate to sub_actor
-    // that it should register itself with AddActor
-    // caf::replies_to<reg_atom>::with<bool>,
-
     // this message performs simple subtraction
     caf::replies_to<sub_atom, int, int>::with<int>
 
@@ -46,9 +42,9 @@ public:
   }
 
 public:
-  const char *name() const { return "ActorThatCheatsWhenAdding"; }
+  const char *name() const override { return "ActorThatCheatsWhenAdding"; }
 
-  ActorThatCheatsWhenAdding::behavior_type make_behavior() {
+  ActorThatCheatsWhenAdding::behavior_type make_behavior() override {
     return {
 
         // implementation of behaviors
@@ -66,6 +62,25 @@ public:
 
                 // time to deliver on our promise
                 rp.deliver(result);
+
+                // after doing its sneaky work, this actor
+                // would now quit
+                //
+                // Normally you would not do this in real code,
+                // you may send a separate message to make this actor quit
+                // but for our sample we are calling it here
+                //
+                // Why calling it is essential for this convoluted sample ?
+                //
+                // Since we have created a cyclic reference (AddActor has ref to
+                // SubActor and vice versa) the process will not cleanly exit
+                // anymore.
+                //
+                // By calling quit here we would trigger the on_exit method of
+                // this actor which then destroys the reference to sub actor
+                // that it holds and essentially ending in breaking the cycle !
+
+                this->quit();
               });
 
           return rp;
@@ -78,6 +93,11 @@ public:
         }
 
     };
+  }
+
+  void on_exit() override {
+    caf::aout(this) << "on_exit[ActorThatCheatsWhenAdding]" << std::endl;
+    destroy(this->_sub_actor_ref);
   }
 
 private:
@@ -96,9 +116,9 @@ public:
   }
 
 public:
-  const char *name() const { return "ActorThanCanSub"; }
+  const char *name() const override { return "ActorThanCanSub"; }
 
-  ActorThanCanSub::behavior_type make_behavior() {
+  ActorThanCanSub::behavior_type make_behavior() override {
     return {
 
         // implementation of its behavior
@@ -146,6 +166,11 @@ public:
           // a helper to make a full filled promise
           return this->response(x - y);
         }};
+  }
+
+  void on_exit() override {
+    caf::aout(this) << "on_exit[ActorThanCanSub]" << std::endl;
+    destroy(this->_add_actor);
   }
 
 private:
