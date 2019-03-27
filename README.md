@@ -90,4 +90,5 @@ system and other actor that can monitor such events.
 This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
 at its construction) to another actor. The other actor would then use the supplied reference to send messages.
 
-[This example is not working yet !]
+Please note that the scenario in this example is bit convoluted and normally you should not write your code like this. Please read
+the comments in the code for more information.
