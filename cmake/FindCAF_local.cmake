@@ -12,7 +12,7 @@ else()
     set(CAF_BUILD_DIR "_release")
 endif()
 
-set(CAF_INCLUDE_PATH $ENV{CAF_LOCAL_COMPILE_ROOT}/libcaf_core $ENV{CAF_LOCAL_COMPILE_ROOT}/libcaf_io)
+set(CAF_INCLUDE_PATH $ENV{CAF_LOCAL_COMPILE_ROOT}/libcaf_core $ENV{CAF_LOCAL_COMPILE_ROOT}/libcaf_io ${CAF_INCLUDE_PATH} $ENV{CAF_LOCAL_COMPILE_ROOT}/libcaf_test)
 
 # this is needed because the auto generated build config is in this directory
 set(CAF_INCLUDE_PATH ${CAF_INCLUDE_PATH} $ENV{CAF_LOCAL_COMPILE_ROOT}/${CAF_BUILD_DIR}/libcaf_core)

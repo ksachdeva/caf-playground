@@ -4,30 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [{
-            "name": "self-quiting-actor",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/_debug/bin/self-quiting-actor",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
-            "name": "passing-ref-to-other-actor",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/_debug/bin/passing-ref-to-other-actor",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
             "name": "ref-of-cls-actors",
             "type": "cppdbg",
             "request": "launch",
@@ -52,11 +28,11 @@
             "MIMode": "lldb"
         },
         {
-            "name": "quit-from-separate-thread",
+            "name": "testing-caf",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/_debug/bin/quit-from-separate-thread",
-            "args": [],
+            "program": "${workspaceFolder}/_debug/bin/testing-caf",
+            "args": ["--max-runtime=0"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
