@@ -42,10 +42,26 @@ For e.g.
 mybinder.org may launch url [it may be different for you as they spawn containers dynamically] as https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/tree, you simply replace it
 with https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/lab.
 
+## Some Limitations and resolutions
+
+Jupyter notebooks are mostly written using `python` language however here we use `C++`. This is made possible
+by two projects - https://github.com/root-project/cling and https://github.com/QuantStack/xeus-cling.
+
+Support of running C++ is realtively new and so it is not as robust as that for python.
+
+There are few limitations that you should be aware of -
+
+One of the main one is -:
+
+* If a cell in the notebook defines a C++ function or class you can not execute it again. The compiler
+will complain say that symbol is already defined. It is logical from compilers perspective but inconvenient 
+from users perspective !.
+
+If the notebook gives compilation errors I would recommend to always do `Restart the kernel`.
+
 ## Only viewing the notebooks
 
-Github natively supports viewing jupyter notebooks. Just click on the file however if you are interested in viewing using a better renderer then you can go to [https://nbviewer.jupyter.org/](https://nbviewer.jupyter.org/) and provide
-the path to this repository.
+Github natively supports viewing jupyter notebooks. Just click on the file however if you are interested in viewing using a better renderer then you can go to [https://nbviewer.jupyter.org/](https://nbviewer.jupyter.org/) and provide the path to this repository.
 
 ### Examples
 
@@ -81,8 +97,7 @@ system and other actor that can monitor such events.
 
 * [**ref-of-cls-actors**](notebooks/ref-of-cls-actors.ipynb)
 
-This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
-at its construction) to another actor. The other actor would then use the supplied reference to send messages.
+This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not at its construction) to another actor. The other actor would then use the supplied reference to send messages.
 
 Please note that the scenario in this example is bit convoluted and normally you should not write your code like this. 
 
