@@ -1,0 +1,38 @@
+ARG CAF_VERSION='0.16.3'
+FROM jupyter/minimal-notebook:latest
+
+ARG CAF_VERSION='0.16.3'
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y --fix-missing \
+    build-essential \
+    wget \
+    curl \
+    clang \
+    pkg-config \
+    cmake \
+    libssl-dev \   
+    libcurl4-openssl-dev \
+    && apt-get clean \ 
+    && rm -rf /tmp/* /var/tmp/* \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp
+
+RUN wget https://github.com/actor-framework/actor-framework/archive/${CAF_VERSION}.tar.gz \
+    && tar xvf ${CAF_VERSION}.tar.gz \
+    && cd actor-framework-${CAF_VERSION} \
+    && ./configure --with-clang=/usr/bin/clang++ --no-examples --no-unit-tests --no-opencl --with-log-level=TRACE --build-type=Debug --build-dir=_debug \
+    && cd _debug \
+    && make -j4 \
+    && make install
+
+# switch back to user created by base image
+USER $NB_UID
+
+RUN conda install xeus-cling -c conda-forge
+
+# make the home directory the work dir
+WORKDIR $HOME
