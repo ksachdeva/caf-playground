@@ -1,94 +1,89 @@
-
 # CAF Examples
 
-This repository contain some examples that try to emulate real world
-use cases while still trying to remain simple.
+This repository contains jupyter notebooks that illustrate various aspects
+of C++ actor framework (CAF).
 
-The examples are heavy commented so you can follow along the code.
+## Zero install setup [Running them using binder]
 
-## Install
+The advantage of writing examples using jupyter notebooks is that you can use both
+markdown and code in the same document.
 
-There are two ways to compile the examples. 
+A service like mybinder.org provides functionality to run these notebooks (for free) in cloud and
+hence there is no setup/install/compilation required.
 
-### Approach 1 (if you do not want to debug CAF)
+Click on the below badge to go to mybinder.org and launch.
 
-First install CAF following the instructions described at the CAF repository (https://github.com/actor-framework/actor-framework)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ksachdeva/caf-playground/master)
 
-Typically you would end up installing it in /usr/local
+## Running locally [only need docker]
 
-For Windows you can use the version from vcpkg (https://github.com/Microsoft/vcpkg/tree/master/ports/caf) [at this point of time it is one version behind]
+If you want to run them locally and/or contribute some notebooks/examples then it is also very easy.
 
-Finally compile this repository using
+Again you do not have install any library/cmake/compiler etc. All you need is docker and if you are on
+linux or osx just use the `run-locally.sh` script provided in this repository.
 
-```bash
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build . --config Release
-```
-
-### Approach 2 (if you have a locally compiled version of CAF)
-
-Set an environment variable `CAF_LOCAL_COMPILE_ROOT` that points to the CAF directory
-
-At present I assume that you used `_debug` in CAF directory as the folder where you
-compiled it. If it is something else then go to `cmake/FindCAF_local.cmake` and change
-`_debug` to whatever you have chosen as the name of folder.
-
-For example I compiled it using following steps
+If you are on windows run the command as :
 
 ```bash
-# compiling CAF (on OSX, should be same on Linux)
-./configure --with-log-level=TRACE --build-type=Debug --build-dir=_debug
-cd _debug
-make -j4
+docker run --rm -it -p 8888:8888 -v <full_path_notebooks_folder>:/home/jovyan/notebooks ksachdeva17/caf:latest
 ```
 
-Finally compile this repository using
+## Juppyter vs Jupyterlab
 
-```bash
-mkdir _debug
-cd _debug
-cmake ..
-cmake --build .
-```
+Irrespective of how you run them (binder or local) you have the option to use either jupyter or jupyerlab.
+
+The default is jupyter as I have not yet figured out how to start in jupyterlab mode. I personally
+prefer jupyterlab.
+
+In order to use jupyterlab all you need is replace `tree` with `lab` in the browser url.
+
+For e.g.
+
+mybinder.org may launch url [it may be different for you as they spawn containers dynamically] as https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/tree, you simply replace it
+with https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/lab.
+
+## Only viewing the notebooks
+
+Github natively supports viewing jupyter notebooks. Just click on the file however if you are interested in viewing using a better renderer then you can go to [https://nbviewer.jupyter.org/](https://nbviewer.jupyter.org/) and provide
+the path to this repository.
 
 ### Examples
 
 The order of examples is *kind* of important (but not mandaotry to follow) if you are new to CAF.
 
-Here is suggested order to try
+Here is a suggested order to try :
 
-* [**hello-caf**](samples/src/hello-caf.cc)
+* [**hello-caf**](notebooks/hello-caf.ipynb)
 
 The customary hello world but with a little twist. Demonstrates how to construct function and
 class based actors. The purpose of this example is for you to get started very quickly with the
 simplest possible use case.
 
-* [**polymorphic-actors**](samples/src/polymorphic-actors.cc)
+* [**polymorphic-actors**](notebooks/polymorphic-actors.ipynb)
 
 This example demonstrates how you can have different implementations of the same trait and 
 thereby achiving polymorphism.
 
-* [**request-then**](samples/src/request-then.cc)
+* [**request-then**](notebooks/request-then.ipynb)
 
 This example demonstrates the usage of `then` when you use `request`. Usage of `then` keeps the mailbox
 of an actor active i.e. messages to its other behaviors can still be sent.
 
-* [**request-await**](samples/src/request-await.cc)
+* [**request-await**](notebooks/request-await.ipynb)
 
 This example demonstrates the usage of `await` when you use `request`. Usage of `await` informs the framework (CAF)
 that it should not send messages to its other behaviors while it waiting for the request to finish.
 
-* [**monitoring-actors**](samples/src/monitoring-actors.cc)
+* [**monitoring-actors**](notebooks/monitoring-actors.ipynb)
 
 This example shows how one actor can terminate (logical unregistration) itself from the actor
 system and other actor that can monitor such events.
 
-* [**ref-of-cls-actors**](samples/src/ref-of-cls-actors.cc)
+* [**ref-of-cls-actors**](notebooks/ref-of-cls-actors.ipynb)
 
 This example tries to construct a scenario where an actor would like to send its reference (at some time in future i.e. not
 at its construction) to another actor. The other actor would then use the supplied reference to send messages.
 
-Please note that the scenario in this example is bit convoluted and normally you should not write your code like this. Please read
-the comments in the code for more information.
+Please note that the scenario in this example is bit convoluted and normally you should not write your code like this. 
+
+Please read the comments in the code for more information.
