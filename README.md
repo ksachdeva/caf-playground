@@ -15,6 +15,8 @@ Click on the below badge to go to mybinder.org and launch.
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ksachdeva/caf-playground/master?urlpath=lab)
 
+Please note that since binder is a free service, sometimes it takes a minute to launch the server for you. Once it launched, you will see the jupyter lab environment in your browser. The notebooks are in the `work` directory.
+
 ## Running locally [only need docker]
 
 If you want to run them locally and/or contribute some notebooks/examples then it is also very easy.
