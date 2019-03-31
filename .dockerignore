@@ -1,0 +1,5 @@
+.vscode
+cmake
+samples
+.ipynb_checkpoints
+*.log
