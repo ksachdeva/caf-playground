@@ -13,7 +13,7 @@ hence there is no setup/install/compilation required.
 
 Click on the below badge to go to mybinder.org and launch.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ksachdeva/caf-playground/master)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ksachdeva/caf-playground/master?urlpath=lab)
 
 ## Running locally [only need docker]
 
@@ -25,22 +25,8 @@ linux or osx just use the `run-locally.sh` script provided in this repository.
 If you are on windows run the command as :
 
 ```bash
-docker run --rm -it -p 8888:8888 -v <full_path_notebooks_folder>:/home/jovyan/notebooks ksachdeva17/caf:latest
+docker run --rm -it -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v <full_path_notebooks_folder>:/home/jovyan/notebooks ksachdeva17/caf:latest
 ```
-
-## Juppyter vs Jupyterlab
-
-Irrespective of how you run them (binder or local) you have the option to use either jupyter or jupyerlab.
-
-The default is jupyter as I have not yet figured out how to start in jupyterlab mode. I personally
-prefer jupyterlab.
-
-In order to use jupyterlab all you need is replace `tree` with `lab` in the browser url.
-
-For e.g.
-
-mybinder.org may launch url [it may be different for you as they spawn containers dynamically] as https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/tree, you simply replace it
-with https://hub.mybinder.org/user/ksachdeva-caf-playground-hm5n1se0/lab.
 
 ## Some Limitations and resolutions
 
